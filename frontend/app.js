@@ -3,6 +3,7 @@
    Make sure Firebase is initialized in your HTML when not using demo mode.
 */
 
+
 // Read demo flag from URL
 const urlParams = new URLSearchParams(window.location.search);
 const isDemoMode = urlParams.get('demo') === 'true';
@@ -111,11 +112,19 @@ function setupMenu() {
   });
 }
 
-function loadTab(tab) {
+async function loadTab(tab) {
+  
   const c = byId('tabContent');
-  if (!c) return console.error('No tabContent element found');
   c.innerHTML = '';
-  switch (tab) {
+
+  if(tab === 'aiexcuses'){
+    if(typeof renderAIExcuses !== 'function'){
+      await loadScript('aiExcuses.js');
+    }
+    return renderAIExcuses();
+  }
+
+  switch(tab) {
     case 'dashboard': return renderDashboard();
     case 'add': return renderAddBunk();
     case 'withdraw': return renderWithdraw();
@@ -124,10 +133,28 @@ function loadTab(tab) {
     case 'heatmap': return renderHeatmap();
     case 'profile': return renderProfile();
     case 'leaderboard': return renderLeaderboard();
+    case 'aiexpress':
+  return renderAIExcuses();
+
     default:
-      c.innerHTML = '<h2>Not found</h2>';
+      c.innerHTML='<h2>Not found</h2>';
   }
 }
+
+function loadScript(src){
+  return new Promise((resolve, reject) => {
+    if(document.querySelector(`script[src="${src}"]`)) {
+      resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+    document.head.appendChild(script);
+  });
+}
+
 
 // --- Data layer: fetch/save bunks --- //
 async function fetchUserBunks() {
@@ -274,14 +301,14 @@ async function renderDashboard() {
 }
 
 // --- Statement --- //
-async function renderStatement() {
+async function renderStatement(){
   const c = byId('tabContent');
-  c.appendChild(el('<h2>Statement</h2>'));
+  c.innerHTML = '<h2>Statement</h2>';
 
   const bunks = await fetchUserBunks();
 
-  if (!bunks || bunks.length === 0) {
-    c.innerHTML += '<p>No bunks to show.</p>';
+  if(bunks.length === 0){
+    c.innerHTML += '<p>No bunks found.</p>';
     return;
   }
 
@@ -290,11 +317,45 @@ async function renderStatement() {
     const li = el(`
       <li class="bunk-item border p-2 mb-2 rounded flex justify-between items-center">
         <div>
-          <strong>${escapeHtml(bunk.subject)}</strong> on ${escapeHtml(bunk.date)}<br/>
-          <small>${escapeHtml(bunk.reason || '')}</small>
+          <strong>${bunk.subject}</strong> on ${bunk.date}<br/>
+          <small>${bunk.reason || ''}</small>
         </div>
         <div>
-          ${bunk.proofUrl ? `<img src="${escapeHtml(bunk.proofUrl)}" alt="Proof" style="max-width:50px; max-height:50px; margin-right:10px;" />` : ''}
+          ${bunk.proofUrl ? `<img src="${bunk.proofUrl}" alt="Proof" style="max-width:50px; max-height:50px;" />` : ''}
+        </div>
+      </li>
+    `);
+    list.appendChild(li);
+  });
+  c.appendChild(list);
+}
+
+
+
+
+// --- Withdraw (placeholder) --- //
+async function renderWithdraw(){
+  const c = byId('tabContent');
+  c.innerHTML = '<h2>Withdraw Bunks</h2>';
+
+  // Fetch user bunks
+  const bunks = await fetchUserBunks();
+
+  if(bunks.length === 0){
+    c.innerHTML += '<p>No bunks to withdraw.</p>';
+    return;
+  }
+
+  const list = el('<ul class="bunk-list"></ul>');
+  bunks.forEach(bunk => {
+    const li = el(`
+      <li class="bunk-item border p-2 mb-2 rounded flex justify-between items-center">
+        <div>
+          <strong>${bunk.subject}</strong> on ${bunk.date}<br/>
+          <small>${bunk.reason || ''}</small>
+        </div>
+        <div>
+          ${bunk.proofUrl ? `<img src="${bunk.proofUrl}" alt="Proof" style="max-width:50px; max-height:50px; margin-right:10px;" />` : ''}
           <button data-id="${bunk.id}" class="removeBunkBtn px-2 py-1 bg-red-600 text-white rounded">Remove</button>
         </div>
       </li>
@@ -303,22 +364,17 @@ async function renderStatement() {
   });
   c.appendChild(list);
 
-  // Setup remove bunk button listeners
-  c.querySelectorAll('.removeBunkBtn').forEach(btn => {
+  // Setup remove bunk buttons with the removeBunk function
+  document.querySelectorAll('.removeBunkBtn').forEach(btn => {
     btn.addEventListener('click', e => {
       const bunkId = e.target.dataset.id;
-      if (confirm('Are you sure you want to remove this bunk?')) {
+      if(confirm('Are you sure you want to remove this bunk?')){
         removeBunk(bunkId);
       }
     });
   });
 }
 
-// --- Withdraw (placeholder) --- //
-function renderWithdraw() {
-  const c = byId('tabContent');
-  c.innerHTML = `<h2>Withdraw Bunks</h2><p>Withdraw bunk functionality coming soon.</p>`;
-}
 
 // --- Charts: simple subject-count bar chart --- //
 async function renderCharts() {
@@ -578,3 +634,5 @@ document.addEventListener('DOMContentLoaded', () => {
   setupMenu();
   initAuth();
 });
+
+
