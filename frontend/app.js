@@ -527,15 +527,15 @@ async function renderLeaderboard() {
       { name: "Priya", bunks: 18, level: "Silver" },
       { name: "Rohan", bunks: 15, level: "Bronze" },
       { name: "Nina", bunks: 10, level: "Bronze" },
-        { name: "Leo", bunks: 27, level: "Gold" },
-{ name: "Sara", bunks: 19, level: "Silver" },
-{ name: "Ishan", bunks: 23, level: "Silver" },
-{ name: "Tara", bunks: 14, level: "Bronze" },
-{ name: "Vikram", bunks: 33, level: "Gold" },
-{ name: "Anita", bunks: 20, level: "Silver" },
-{ name: "Kiran", bunks: 12, level: "Bronze" },
-{ name: "Riya", bunks: 25, level: "Gold" },
-{ name: "Dev", bunks: 17, level: "Silver" }
+      { name: "Leo", bunks: 27, level: "Gold" },
+      { name: "Sara", bunks: 19, level: "Silver" },
+      { name: "Ishan", bunks: 23, level: "Silver" },
+      { name: "Tara", bunks: 14, level: "Bronze" },
+      { name: "Vikram", bunks: 33, level: "Gold" },
+      { name: "Anita", bunks: 20, level: "Silver" },
+      { name: "Kiran", bunks: 12, level: "Bronze" },
+      { name: "Riya", bunks: 25, level: "Gold" },
+      { name: "Dev", bunks: 17, level: "Silver" }
 
     ];
     let html = `
