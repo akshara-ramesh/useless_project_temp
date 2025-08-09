@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Excuse Generator</title>
+  
+</head>
+<body>
+
+  <h1>AI Excuse Generator</h1>
+
+  <label for="subject">Subject (optional):</label>
+  <input type="text" id="subject" placeholder="e.g., math class" />
+
+  <label for="tone">Select Tone:</label>
+  <select id="tone">
+    <option value="casual" selected>Casual</option>
+    <option value="formal">Formal</option>
+  </select>
+
+  <button id="genLocalBtn">Generate Local Excuse</button>
+  <!-- The AI excuse button will only work if you have backend /api/excuse -->
+  <button id="genBtn">Generate AI Excuse (requires backend)</button>
+
+  <div id="result"></div>
+
+  <script src="chatbot.js"></script>
+</body>
+</html>

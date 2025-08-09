@@ -62,8 +62,8 @@ function showUserInfo(u) {
     if (byId('userName')) byId('userName').textContent = 'Guest';
     if (byId('userEmail')) byId('userEmail').textContent = '';
   } else {
-    if (byId('userName')) byId('userName').textContent = u.displayName || u.name || 'Demo User';
-    if (byId('userEmail')) byId('userEmail').textContent = u.email || 'demo@bunkbank.com';
+    if (byId('userName')) byId('userName').textContent = u.displayName || u.name || 'User';
+    if (byId('userEmail')) byId('userEmail').textContent = u.email || 'user@bunkbank.com';
   }
 }
 
@@ -380,7 +380,7 @@ async function renderWithdraw(){
 async function renderCharts() {
   const c = byId('tabContent');
   c.appendChild(el('<h2>Charts</h2>'));
-  c.appendChild(el('<p>Subject-wise bunk counts (simple bar chart)</p>'));
+  c.appendChild(el('<p>Subject-wise bunk counts</p>'));
 
   const bunks = await fetchUserBunks();
 
@@ -525,7 +525,18 @@ async function renderLeaderboard() {
       { name: "Maya", bunks: 29, level: "Gold" },
       { name: "Sam", bunks: 22, level: "Silver" },
       { name: "Priya", bunks: 18, level: "Silver" },
-      { name: "Rohan", bunks: 15, level: "Bronze" }
+      { name: "Rohan", bunks: 15, level: "Bronze" },
+      { name: "Nina", bunks: 10, level: "Bronze" },
+        { name: "Leo", bunks: 27, level: "Gold" },
+{ name: "Sara", bunks: 19, level: "Silver" },
+{ name: "Ishan", bunks: 23, level: "Silver" },
+{ name: "Tara", bunks: 14, level: "Bronze" },
+{ name: "Vikram", bunks: 33, level: "Gold" },
+{ name: "Anita", bunks: 20, level: "Silver" },
+{ name: "Kiran", bunks: 12, level: "Bronze" },
+{ name: "Riya", bunks: 25, level: "Gold" },
+{ name: "Dev", bunks: 17, level: "Silver" }
+
     ];
     let html = `
       <table class="w-full border-collapse border border-gray-300">
