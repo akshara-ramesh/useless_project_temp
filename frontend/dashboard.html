@@ -6,17 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css">
-
-  <!-- Firebase App (core SDK) -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <!-- Firebase Authentication -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  <!-- Firebase Firestore -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-  <!-- Firebase Storage -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-  <!-- Your Firebase config -->
-  <script src="firebase.js"></script>
+  <script src="../firebase.js"></script>
 </head>
 <body class="bg-slate-50 min-h-screen">
   <header class="bg-white shadow p-4 flex justify-between items-center">
@@ -25,6 +15,7 @@
       <p class="text-sm text-slate-500">Dashboard</p>
     </div>
     <div id="userArea" class="flex items-center gap-3">
+      <img id="userPhoto" class="hidden w-10 h-10 rounded-full object-cover" alt="">
       <div>
         <div id="userName" class="font-medium"></div>
         <div id="userEmail" class="text-xs text-slate-500"></div>
@@ -38,19 +29,19 @@
       <h3 class="font-semibold">Menu</h3>
       <nav class="mt-3 flex flex-col gap-2">
         <button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="dashboard">Dashboard</button>
-        <button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="add">Deposit a Bunk</button>
-        <button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="withdraw">Withdraw Bunks</button>
+        <button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="add">Add a Bunk</button>
+        <button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="withdraw">Remove a Bunk</button>
         <button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="statement">Statement</button>
-        <button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="charts">Charts</button>
-        <!--<button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="heatmap">Heatmap</button>  -->
         <button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="leaderboard">Leaderboard</button>
-        <button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="generateExcuseBtn">Generate Excuses</button>
+        <button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="heatmap">Attendance Heatmap</button>
+        <button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="chatbot">AI Excuses</button>
         <button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="profile">Profile</button>
+        <button class="menuBtn text-left p-2 rounded hover:bg-slate-50" data-tab="settings">Settings</button>
       </nav>
     </aside>
 
     <section id="tabContent" class="col-span-3 bg-white rounded-xl p-6 shadow min-h-[420px]">
-      <!-- Default dashboard content loads here -->
+      <h2>Loading...</h2>
     </section>
   </main>
 
