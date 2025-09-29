@@ -6,58 +6,60 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css">
-  <!-- Firebase App (core SDK) -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-
-<!-- Firebase Authentication -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-
-<!-- Firebase Firestore -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
-<!-- Firebase Storage (for proof uploads) -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-
-
-  <script src="firebase.js"></script>
+  <script src="../firebase.js"></script>
 </head>
 <body class="bg-slate-50 min-h-screen flex items-center justify-center">
   <main class="max-w-xl w-full p-6">
     <div class="bg-white rounded-xl shadow-lg p-6 text-center">
       <h1 class="text-3xl font-semibold">🏦 Bunk Bank</h1>
-      <p class="text-slate-600 mt-2">Bank your bunks.</p>
+      <p class="text-slate-600 mt-2">Bank your bunks. Demo account ready.</p>
+
       <div class="mt-6">
+        <h3 class="text-sm text-slate-500">Demo account (email/password)</h3>
         <div class="mt-2 flex gap-2 justify-center">
-          <input id="email" placeholder="Email" class="p-2 border rounded" value="demo@bunkbank.com">
-          <input id="password" placeholder="Password" class="p-2 border rounded" value="demo123" type="password">
+          <input id="email" placeholder="demo@bunkbank.com" class="p-2 border rounded" value="demo@bunkbank.com">
+          <input id="password" placeholder="demo123" class="p-2 border rounded" value="demo123" type="password">
         </div>
         <div class="mt-3">
           <button id="loginBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg">Login</button>
-          <button id="registerBtn" class="ml-2 border px-4 py-2 rounded-lg">Register</button>
+          <button id="signupBtn" class="ml-2 border px-4 py-2 rounded-lg">Create Demo User</button>
         </div>
       </div>
-      
+
+      <div class="mt-4 text-sm text-slate-500">Or open the app in demo mode (no backend writes):</div>
+      <div class="mt-2">
+        <button id="demoModeBtn" class="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg">Open Demo Mode</button>
+      </div>
+
+      <p class="text-xs text-slate-400 mt-4">Use demo account to show real Firebase reads/writes. For hackathon, the seed script creates the demo user and data.</p>
     </div>
   </main>
-  <a href="chatbot.html">Chatbot</a>
 
   <script>
+    document.getElementById('demoModeBtn').addEventListener('click', ()=> {
+      window.location.href = 'dashboard.html?demo=true';
+    });
+
     document.getElementById('loginBtn').addEventListener('click', async ()=> {
       const email = document.getElementById('email').value;
       const pass = document.getElementById('password').value;
-      try { await firebase.auth().signInWithEmailAndPassword(email, pass); window.location.href = 'dashboard.html'; }
-      catch(err){ alert('Login failed: ' + err.message); }
-
-      const demoData = window.__DEMO_DATA__ || {};
-      localStorage.setItem('demo_bunks', JSON.stringify(demoData.bunks || []));
-      localStorage.setItem('demo_attendance', JSON.stringify(demoData.attendance || []));
-      localStorage.setItem('demo_users', JSON.stringify(demoData.users || []));
-      window.location.href = 'dashboard.html?demo=true';
+      try {
+        await firebase.auth().signInWithEmailAndPassword(email, pass);
+        window.location.href = 'dashboard.html';
+      } catch(err){
+        alert('Login failed: ' + err.message);
+      }
     });
-    document.getElementById('registerBtn').addEventListener('click', async ()=> {
+
+    document.getElementById('signupBtn').addEventListener('click', async ()=> {
       const email = document.getElementById('email').value;
       const pass = document.getElementById('password').value;
-      try { await firebase.auth().createUserWithEmailAndPassword(email, pass); alert('User created. Now login.'); } catch(err){ alert('Signup failed: ' + err.message); }
+      try {
+        await firebase.auth().createUserWithEmailAndPassword(email, pass);
+        alert('Demo user created. You can now login.');
+      } catch(err){
+        alert('Signup failed: ' + err.message + '\n(If user exists, just login or run admin seeder.)');
+      }
     });
   </script>
 </body>
