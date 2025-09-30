@@ -1,21 +1,13 @@
-// Make sure you use type="module" in your dashboard.html: <script type="module" src="app.js"></script>
+// Top: Import everything just once!
 import { auth, db } from './firebase.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import {
-  collection,
-  addDoc,
-  doc,
-  deleteDoc,
-  query,
-  where,
-  getDocs,
-  orderBy,
-  getDoc
+  addDoc, collection, getDocs, query, where, orderBy, doc, deleteDoc, getDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 let currentUser = null;
 
-// Auth guard, user info and menu setup
+// AUTH
 onAuthStateChanged(auth, user => {
   if (!user) window.location.href = "index.html";
   else {
@@ -25,6 +17,7 @@ onAuthStateChanged(auth, user => {
     loadTab('dashboard');
   }
 });
+
 document.getElementById('logoutBtn').addEventListener('click', () => {
   signOut(auth).then(() => window.location.href = "index.html");
 });
@@ -33,7 +26,7 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 function el(html) { const tmp = document.createElement("div"); tmp.innerHTML = html.trim(); return tmp.firstChild; }
 function byId(id) { return document.getElementById(id); }
 
-// Show user info in header
+// Show user info
 function showUserInfo(user) {
   byId('userName').textContent = user.displayName || user.email || 'User';
   byId('userEmail').textContent = user.email || '';
@@ -45,7 +38,7 @@ function showUserInfo(user) {
   }
 }
 
-// Sidebar menu
+// Menu
 function setupMenu() {
   document.querySelectorAll('.menuBtn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -75,7 +68,7 @@ function loadTab(tab) {
   }
 }
 
-// Data functions (use only Firestore)
+// Data functions (Firestore only!)
 async function addBunk(subject, date, reason){
   await addDoc(collection(db, "bunks"), {
     userId: currentUser.uid,
@@ -95,8 +88,11 @@ async function fetchUserBunks(){
     orderBy("timestamp", "desc")
   );
   const snap = await getDocs(q);
-  return snap.docs.map(d=> ({ id:d.id, ...d.data() }));
+  const results = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  console.log('Fetched user bunks:', results);
+  return results;
 }
+
 
 async function countUserBunks(userId){
   const q = query(collection(db, "bunks"), where("userId", "==", userId));
@@ -113,7 +109,7 @@ function computeLevel(bunks){
   return {level:0, name:'Novice'};
 }
 
-// Render functions for all tabs
+// Render functions
 function renderDashboard(){
   const c = byId('tabContent');
   c.innerHTML = '';
@@ -142,31 +138,49 @@ function renderDashboard(){
 function renderAddBunk(){
   const c = byId('tabContent');
   c.innerHTML = '<h2>Deposit a Bunk</h2>';
-  const form = el(`<form id="addForm" class="mt-4"><input id="s_subject" class="w-full p-2 border rounded mt-2" placeholder="Subject" required /><input id="s_date" type="date" class="w-full p-2 border rounded mt-2" required /><input id="s_reason" class="w-full p-2 border rounded mt-2" placeholder="Reason (optional)" /><div class="mt-3"><button class="px-3 py-1 rounded bg-blue-600 text-white">Deposit Bunk</button></div></form>`);
+  const form = el(`<form id="addForm" class="mt-4">
+    <input id="s_subject" class="w-full p-2 border rounded mt-2" placeholder="Subject" required />
+    <input id="s_date" type="date" class="w-full p-2 border rounded mt-2" required />
+    <input id="s_reason" class="w-full p-2 border rounded mt-2" placeholder="Reason (optional)" />
+    <div class="mt-3"><button class="px-3 py-1 rounded bg-blue-600 text-white">Deposit Bunk</button></div>
+  </form>`);
   c.appendChild(form);
-  form.querySelector('#addForm').addEventListener('submit', async (e)=>{
+
+  // Here, just use "form", not form.querySelector
+  form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const subject = form.querySelector('#s_subject').value.trim();
     const date = form.querySelector('#s_date').value;
     const reason = form.querySelector('#s_reason').value.trim();
     if(!subject || !date) return alert('Please fill subject and date');
-    await addBunk(subject,date,reason||'—');
+    await addBunk(subject, date, reason || '—');
     alert('Bunk deposited!');
     loadTab('dashboard');
   });
 }
 
-function renderWithdraw(){
+
+function renderWithdraw() {
   const c = byId('tabContent');
   c.innerHTML = '<h2>Withdraw a Bunk</h2><p class="text-slate-500">Select a bunk to withdraw (remove).</p>';
-  fetchUserBunks().then(bunks=>{
-    if(!bunks || bunks.length===0) return c.appendChild(el('<p>No bunks to withdraw.</p>'));
+  fetchUserBunks().then(bunks => {
+    if (!bunks || bunks.length === 0) {
+      c.appendChild(el('<p>No bunks to withdraw.</p>'));
+      return;
+    }
     const list = el('<ul class="mt-4 space-y-2"></ul>');
-    bunks.forEach(b=>{
-      const li = el(`<li class="p-3 rounded bg-slate-50 flex justify-between items-center"><div><div class="font-semibold">${b.subject}</div><div class="text-sm text-slate-500">${b.date} • ${b.reason||''}</div></div></li>`);
+    bunks.forEach(b => {
+      const li = el(
+        `<li class="p-3 rounded bg-slate-50 flex justify-between items-center">
+          <div>
+            <div class="font-semibold">${b.subject}</div>
+            <div class="text-sm text-slate-500">${b.date} • ${b.reason || ''}</div>
+          </div>
+        </li>`
+      );
       const btn = el('<button class="px-2 py-1 text-sm rounded border">Withdraw</button>');
-      btn.addEventListener('click', async ()=>{
-        if(!confirm('Withdraw this bunk?')) return;
+      btn.addEventListener('click', async () => {
+        if (!confirm('Withdraw this bunk?')) return;
         await removeBunk(b.id);
         alert('Bunk withdrawn.');
         loadTab('withdraw');
@@ -177,6 +191,7 @@ function renderWithdraw(){
     c.appendChild(list);
   });
 }
+
 
 function renderStatement(){
   const c = byId('tabContent');
@@ -192,7 +207,6 @@ function renderStatement(){
   });
 }
 
-// Leaderboard by counting bunks across all users
 async function renderLeaderboard(){
   const c = byId('tabContent');
   c.innerHTML = '<h2>Leaderboard</h2><p class="text-slate-500">Top bunkers</p>';
@@ -226,7 +240,7 @@ function renderHeatmap(){
   const c = byId('tabContent');
   c.innerHTML ='<h2>Attendance Heatmap</h2><p class="text-slate-500">Green = attended, Red = bunked</p>';
   const wrap = el('<div class="mt-4 grid gap-1" style="grid-template-columns: repeat(12, 1fr);"></div>'); c.appendChild(wrap);
-  // Replace this with actual Firestore attendance if needed
+  // Replace this with actual Firestore attendance collection/document if needed
   db.collection('attendance')
     .where('userId','==',currentUser.uid)
     .get()
