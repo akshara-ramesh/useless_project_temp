@@ -12,6 +12,23 @@
 <script type="module" src="firebase.js"></script>
 <script type="module" src="auth.js"></script>
 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCELC91dEecbZtIIHtoqZ134KGjS1iSVuA",
+  authDomain: "bunkbank-9a272.firebaseapp.com",
+  projectId: "bunkbank-9a272",
+  storageBucket: "bunkbank-9a272.appspot.com",
+  messagingSenderId: "528529720718",
+  appId: "1:528529720718:web:3c5a93f57dae43649a10df",
+  measurementId: "G-R6WK41P2TG"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+</script>
+
 
 </head>
 <body class="bg-slate-50 min-h-screen flex items-center justify-center">
