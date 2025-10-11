@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         throw new Error("No excuse found in the response");
       }
       const text = data[0].excuse;
-      result.innerHTML = `<div class="p-4 rounded bg-slate-50"><strong>AI Excuse (Free API):</strong><p>${text}</p>
+      result.innerHTML = `<div class="p-4 rounded bg-slate-50"><strong>AI Excuse:</strong><p>${text}</p>
         <div class="mt-2"><button id="copyBtn" class="px-2 py-1 rounded border">Copy</button></div></div>`;
       document.getElementById('copyBtn').addEventListener('click', () => navigator.clipboard.writeText(text));
     } catch (err) {
