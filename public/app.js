@@ -197,15 +197,40 @@ function renderStatement(){
   const c = byId('tabContent');
   c.innerHTML = '<h2>Bunk Statement</h2>';
   fetchUserBunks().then(bunks=>{
-    if(!bunks || bunks.length===0) return c.appendChild(el('<p>No bunks yet — deposit a bunk!</p>'));
+    if(!bunks || bunks.length===0) {
+      return c.appendChild(el('<p>No bunks yet — deposit a bunk!</p>'));
+    }
     const list = el('<ul class="mt-4 space-y-2"></ul>');
     bunks.forEach(b=>{
-      const time = b.timestamp ? new Date(b.timestamp).toLocaleString() : '';
-      list.appendChild(el(`<li class="p-3 rounded bg-slate-50"><div class="font-semibold">${b.subject}</div><div class="text-sm text-slate-500">${b.date} • ${b.reason||''} • ${time}</div></li>`));
+      // Build base entry string with required fields
+      let parts = [];
+      if (b.date) parts.push(b.date);
+      if (b.reason) parts.push(b.reason);
+
+      // Only add valid timestamp
+      if (b.timestamp) {
+        const d = new Date(b.timestamp);
+        if (!isNaN(d.getTime())) {
+          parts.push(d.toLocaleString());
+        }
+      }
+
+      // Always join non-empty parts with " • "
+      const entryLine = parts.join(' • ');
+
+      list.appendChild(el(
+        `<li class="p-3 rounded bg-slate-50">
+           <div class="font-semibold">${b.subject}</div>
+           <div class="text-sm text-slate-500">${entryLine}</div>
+         </li>`
+      ));
     });
     c.appendChild(list);
   });
 }
+
+
+
 
 async function renderLeaderboard(){
   const c = byId('tabContent');
