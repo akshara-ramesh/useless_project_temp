@@ -1,0 +1,19 @@
+{
+  "name": "useless_project_temp",
+  "version": "1.0.0",
+  "description": "Project utilizing the Gemini API.",
+  "type": "module",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "@google/genai": "^1.26.0",
+    "@google/generative-ai": "^0.24.1",
+    "node-fetch": "^2.6.7"
+  }
+}
